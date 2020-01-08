@@ -3,12 +3,15 @@ import Modal from '../../components/UI/Modal/Modal';
 import Hocaux from '../HOCAUX';
 
 const withErrorHandler = (WrappedComponent, axiosOrders) => {
+  // anonymous class
   return class extends Component {
-    state = {
-      error: null,
-    };
-    // can alternatively move this code inside the constructor
-    UNSAFE_componentWillMount() {
+    constructor(props) {
+      super(props);
+      this.state = {
+        error: null,
+      };
+
+      // need to initialize the interceptors in the constructor before the children are mounted and reach out to the web
       this.requestInterceptor = axiosOrders.interceptors.request.use(req => {
         this.setState({ error: null });
         return req;

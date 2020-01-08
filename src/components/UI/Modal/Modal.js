@@ -2,8 +2,11 @@ import React from 'react';
 import classes from './Modal.module.css';
 import Hocaux from '../../../hoc/HOCAUX';
 import Backdrop from '../Backdrop/Backdrop';
+import propTypes from 'prop-types';
 
 class Modal extends React.Component {
+  // only render the order summary in the virtual DOM if
+  // the modal is shown or the order summary changes
   shouldComponentUpdate(nextProps, nextState) {
     return (
       nextProps.show !== this.props.show ||
@@ -26,5 +29,11 @@ class Modal extends React.Component {
     );
   }
 }
+
+// prop type validation
+Modal.propTypes = {
+  modalClosed: propTypes.func,
+  show: propTypes.bool,
+};
 
 export default Modal;

@@ -31,6 +31,24 @@ class BurgerBuilder extends Component {
     this.purchaseContinueHandler = this.purchaseContinueHandler.bind(this);
   }
 
+  componentDidMount() {
+    // this will grab the information from the most recent order
+    axiosOrders
+      .get('/orders.json')
+      .then(response => {
+        const ingredients = Object.values(response.data).reverse()[0]
+          .ingredients;
+        console.log(ingredients);
+        this.setState({ ingredients: ingredients });
+      })
+      // if there is no catch block, then block runs and you will get undefined cases
+      .catch(error => {
+        this.setState({ error: true });
+        return error;
+      });
+  }
+
+  // adding and removing ingredients
   addIngredientHandler = type => {
     const oldCount = this.state.ingredients[type];
     const updatedCount = oldCount + 1;
@@ -57,9 +75,11 @@ class BurgerBuilder extends Component {
       ingredients: updatedIngredients,
       totalPrice: oldState.totalPrice - INGREDIENT_PRICES[type],
     }));
+    // pass updated ingredients to update purchase state
     this.updatePurchaseState(updatedIngredients);
   };
 
+  // update the purchase state with new ingredients
   updatePurchaseState(ingredients) {
     const sum = Object.keys(ingredients)
       .map(igKey => {
@@ -69,6 +89,7 @@ class BurgerBuilder extends Component {
     this.setState({ purchasable: sum > 0 });
   }
 
+  // Show the modal for ordering
   purchaseHandler = () => {
     this.setState({ purchasing: true });
   };
@@ -77,7 +98,7 @@ class BurgerBuilder extends Component {
     this.setState({ purchasing: false });
   }
 
-  // public fields syntax alternative to binding
+  // public fields syntax is an alternative to binding
   purchaseContinueHandler() {
     this.setState({ loading: true });
     const order = {
@@ -109,36 +130,24 @@ class BurgerBuilder extends Component {
       .catch(err => this.setState({ loading: false, purchasing: false }));
   }
 
-  componentDidMount() {
-    // this will grab the information from the most recent order
-    axiosOrders
-      .get('/orders.json')
-      .then(response => {
-        const ingredients = Object.values(response.data).reverse()[0]
-          .ingredients;
-        console.log(ingredients);
-        this.setState({ ingredients: ingredients });
-      })
-      .catch(error => {
-        this.setState({ error: true });
-      });
-  }
-
   render() {
+    // render method conditional checks
     const disabledInfo = {
       ...this.state.ingredients,
     };
     for (const key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
-
+    // initialize the orderSummary as null
     let orderSummary = null;
+    // if there is an error set a spinner
     let burger = this.state.error ? (
       <p>ingredients can't be loaded</p>
     ) : (
       <Spinner />
     );
 
+    // if there are some ingredients
     if (this.state.ingredients) {
       burger = (
         <Hocaux>
@@ -162,10 +171,12 @@ class BurgerBuilder extends Component {
         />
       );
     }
+    // if the state is in loading, set the order summary to the spinner
     if (this.state.loading) {
       orderSummary = <Spinner />;
     }
 
+    // JSX to render
     return (
       <Hocaux>
         <Modal
