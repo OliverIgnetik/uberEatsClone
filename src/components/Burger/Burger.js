@@ -1,8 +1,9 @@
 import React from 'react';
 import classes from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
-
+import { withRouter } from 'react-router-dom';
 const burger = props => {
+  // console.log(props);
   let transformedIngredients = Object.keys(props.ingredients)
     .map(igKey => {
       // 1. return an empty an array of empty arrays of length equal to the number of each ingredient
@@ -28,4 +29,4 @@ const burger = props => {
   );
 };
 
-export default burger;
+export default withRouter(burger);

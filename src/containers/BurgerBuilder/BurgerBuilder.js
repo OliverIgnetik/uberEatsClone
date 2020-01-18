@@ -100,34 +100,17 @@ class BurgerBuilder extends Component {
 
   // public fields syntax is an alternative to binding
   purchaseContinueHandler() {
-    this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'olli',
-        address: {
-          street: 'test street',
-          zipCode: '123123',
-          country: 'Australia',
-        },
-        email: 'olli@ozemail.com.au',
-      },
-      deliveryMethod: 'fastest',
-    };
-    // firebase convention /name.json
-    axiosOrders
-      .post('/orders.json', order)
-      .then(res => {
-        setTimeout(
-          this.setState({
-            loading: false,
-            purchasing: false,
-          }),
-          1000,
-        );
-      })
-      .catch(err => this.setState({ loading: false, purchasing: false }));
+    const queryParams = [];
+    for (const key in this.state.ingredients) {
+      queryParams.push(
+        encodeURIComponent(key) +
+          '=' +
+          encodeURIComponent(this.state.ingredients[key]),
+      );
+    }
+    queryParams.push('price=' + this.state.totalPrice);
+    const queryString = '?' + queryParams.join('&');
+    this.props.history.push({ pathname: '/checkout', search: queryString });
   }
 
   render() {
