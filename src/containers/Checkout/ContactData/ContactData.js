@@ -3,17 +3,102 @@ import Button from '../../../components/UI/Button/Button';
 import classes from './ContactData.module.css';
 import axiosOrders from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
+import Input from '../../../components/UI/Input/Input';
+import { connect } from 'react-redux';
+import * as actions from '../../../store/actions';
 
 class ContactData extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      email: '',
-      address: {
-        street: '',
-        postalCode: '',
+      errorMessage: null,
+      orderForm: {
+        name: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'text',
+            placeholder: 'Your Name',
+          },
+          validation: {
+            required: true,
+            errorMessage: 'null',
+          },
+          valid: false,
+          value: '',
+          touched: false,
+        },
+        street: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'text',
+            placeholder: 'Street',
+          },
+          validation: {
+            required: true,
+            errorMessage: 'null',
+          },
+          valid: false,
+          value: '',
+          touched: false,
+        },
+        zipCode: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'text',
+            placeholder: 'ZIP Code',
+          },
+          validation: {
+            required: true,
+            minLength: 4,
+            maxLength: 6,
+            errorMessage: 'null',
+          },
+          valid: false,
+          value: '',
+          touched: false,
+        },
+        country: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'text',
+            placeholder: 'Country',
+          },
+          validation: {
+            required: true,
+            errorMessage: 'null',
+          },
+          valid: false,
+          value: '',
+          touched: false,
+        },
+        email: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'email',
+            placeholder: 'Your E-mail',
+          },
+          validation: {
+            required: true,
+            errorMessage: 'null',
+          },
+          valid: false,
+          value: '',
+          touched: false,
+        },
+        deliveryMethod: {
+          elementType: 'select',
+          elementConfig: {
+            options: [
+              { value: 'fastest', displayValue: 'Fastest' },
+              { value: 'cheapest', displayValue: 'Cheapest' },
+            ],
+          },
+          value: 'fastest',
+          valid: true,
+          validation: {},
+        },
       },
+      formIsValid: false,
       loading: false,
     };
   }
@@ -21,19 +106,18 @@ class ContactData extends Component {
   orderHandler = event => {
     event.preventDefault();
     this.setState({ loading: true });
+    const formData = {};
+    // for in is great for objects
+    for (let formElementIdentifier in this.state.orderForm) {
+      formData[formElementIdentifier] = this.state.orderForm[
+        formElementIdentifier
+      ].value;
+    }
+
     const order = {
-      ingredients: this.props.ingredients,
-      price: this.props.totalPrice,
-      customer: {
-        name: 'olli',
-        address: {
-          street: 'test street',
-          zipCode: '123123',
-          country: 'Australia',
-        },
-        email: 'olli@ozemail.com.au',
-      },
-      deliveryMethod: 'fastest',
+      ingredients: this.props.ings,
+      price: this.props.price,
+      orderData: formData,
     };
     // firebase convention /name.json
     axiosOrders
@@ -44,42 +128,77 @@ class ContactData extends Component {
             loading: false,
           });
           this.props.history.push('/');
+          this.props.onClearIngredients();
         }, 1000);
+        return res;
       })
       .catch(err => {
         this.setState({ loading: false });
         this.props.history.push('/');
+        this.props.onClearIngredients();
+        return err;
       });
   };
 
+  checkValidity(value, rules) {
+    // make sure all the validations pass
+    let isValid = true;
+    if (rules.required) {
+      isValid = value.trim() !== '' && isValid;
+    }
+    if (rules.minLength) {
+      isValid = value.length >= rules.minLength && isValid;
+    }
+    if (rules.maxLength) {
+      isValid = value.length <= rules.maxLength && isValid;
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (event, inputIdentifier) => {
+    // deep clone needs multiple spread operators to avoid pointers
+    const updatedOrderForm = {
+      ...this.state.orderForm,
+    };
+    const updatedFormElement = { ...updatedOrderForm[inputIdentifier] };
+    updatedFormElement.value = event.target.value;
+
+    updatedFormElement.valid = this.checkValidity(
+      updatedFormElement.value,
+      updatedFormElement.validation,
+    );
+    updatedFormElement.touched = true;
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+    let formIsValid = true;
+    for (let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+    }
+    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+  };
   render() {
+    const formElementsArray = [];
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key],
+      });
+    }
     let form = (
-      <form>
-        <input
-          className={classes.Input}
-          type='text'
-          name='name'
-          placeholder='Your name'
-        />
-        <input
-          className={classes.Input}
-          type='email'
-          name='email'
-          placeholder='Your email'
-        />
-        <input
-          className={classes.Input}
-          type='text'
-          name='street'
-          placeholder='Street'
-        />
-        <input
-          className={classes.Input}
-          type='text'
-          name='postal'
-          placeholder='Postal Code'
-        />
-        <Button btnType='Success' clicked={this.orderHandler}>
+      <form onSubmit={this.orderHandler}>
+        {formElementsArray.map(el => (
+          <Input
+            key={el.id}
+            touched={el.config.touched}
+            shouldValidate={el.config.validation}
+            invalid={!el.config.valid}
+            elementType={el.config.elementType}
+            elementConfig={el.config.elementConfig}
+            value={el.config.value}
+            changed={event => this.inputChangedHandler(event, el.id)}
+          />
+        ))}
+        <Button btnType='Success' disabled={!this.state.formIsValid}>
           ORDER
         </Button>
       </form>
@@ -97,4 +216,16 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+  return {
+    ings: state.ingredients,
+    price: state.totalPrice,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    onClearIngredients: () => dispatch({ type: actions.CLEAR_INGREDIENTS }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);

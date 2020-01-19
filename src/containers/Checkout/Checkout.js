@@ -2,32 +2,9 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import ContactData from './ContactData/ContactData';
+import { connect } from 'react-redux';
 
 class Checkout extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ingredients: null,
-      totalPrice: 0,
-    };
-  }
-
-  // before we render the child components
-  UNSAFE_componentWillMount() {
-    const query = new URLSearchParams(this.props.location.search);
-    const ingredients = {};
-    let price = 0;
-    for (let param of query.entries()) {
-      // x = x + 1 => x = +1
-      if (param[0] === 'price') {
-        price = param[1];
-      } else {
-        ingredients[param[0]] = +param[1];
-      }
-    }
-    this.setState({ ingredients: ingredients, totalPrice: price });
-  }
-
   checkoutCancelledHandler = () => {
     this.props.history.goBack();
   };
@@ -38,25 +15,23 @@ class Checkout extends Component {
     return (
       <div>
         <CheckoutSummary
-          ingredients={this.state.ingredients}
+          ingredients={this.props.ings}
           checkoutCancelled={this.checkoutCancelledHandler}
           checkoutContinued={this.checkoutContinuedHandler}
         />
         <Route
           path={this.props.match.path + '/contact-data'}
-          render={props => (
-            <ContactData
-              // componentWillMount will stop undefined error
-              ingredients={this.state.ingredients}
-              totalPrice={this.state.totalPrice}
-              // pass on history, match, location etc
-              {...props}
-            />
-          )}
+          component={ContactData}
         />
       </div>
     );
   }
 }
 
-export default Checkout;
+const mapStateToProps = state => {
+  return {
+    ings: state.ingredients,
+  };
+};
+
+export default connect(mapStateToProps)(Checkout);
