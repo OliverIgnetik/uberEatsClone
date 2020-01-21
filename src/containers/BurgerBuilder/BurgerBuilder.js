@@ -8,7 +8,7 @@ import axiosOrders from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions';
+import * as actions from '../../store/actions/index';
 
 class BurgerBuilder extends Component {
   constructor(props) {
@@ -16,8 +16,6 @@ class BurgerBuilder extends Component {
     this.state = {
       // UI state properties
       purchasing: false,
-      loading: false,
-      error: false,
     };
     // bindings
     this.purchaseCancelHandler = this.purchaseCancelHandler.bind(this);
@@ -25,21 +23,7 @@ class BurgerBuilder extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
-    // // this will grab the information from the most recent order
-    // axiosOrders
-    //   .get('/orders.json')
-    //   .then(response => {
-    //     const ingredients = Object.values(response.data).reverse()[0]
-    //       .ingredients;
-    //     console.log(ingredients);
-    //     this.setState({ ingredients: ingredients });
-    //   })
-    //   // if there is no catch block, then block runs and you will get undefined cases
-    //   .catch(error => {
-    //     this.setState({ error: true });
-    //     return error;
-    //   });
+    this.props.onInitIngredients();
   }
 
   // update the purchase state with new ingredients
@@ -77,7 +61,7 @@ class BurgerBuilder extends Component {
     // initialize the orderSummary as null
     let orderSummary = null;
     // if there is an error set a spinner
-    let burger = this.state.error ? (
+    let burger = this.props.error ? (
       <p>ingredients can't be loaded</p>
     ) : (
       <Spinner />
@@ -107,11 +91,6 @@ class BurgerBuilder extends Component {
         />
       );
     }
-    // if the state is in loading, set the order summary to the spinner
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
-    }
-
     // JSX to render
     return (
       <Hocaux>
@@ -130,14 +109,14 @@ const mapStateToProps = state => {
   return {
     ings: state.ingredients,
     totalPrice: state.totalPrice,
+    error: state.error,
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
-    onIngredientAdded: ingName =>
-      dispatch({ type: actions.ADD_INGREDIENT, ingredientName: ingName }),
-    onIngredientRemoved: ingName =>
-      dispatch({ type: actions.REMOVE_INGREDIENT, ingredientName: ingName }),
+    onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
+    onIngredientRemoved: ingName => dispatch(actions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actions.initIngredients()),
   };
 };
 

@@ -13,12 +13,23 @@ const withErrorHandler = (WrappedComponent, axiosOrders) => {
 
       // need to initialize the interceptors in the constructor before the children are mounted and reach out to the web
       this.requestInterceptor = axiosOrders.interceptors.request.use(req => {
+        console.log('====================================');
+        console.log('[withErrorHandler.js] request intercepted');
+        console.log('====================================');
         this.setState({ error: null });
         return req;
       });
       this.responseInterceptor = axiosOrders.interceptors.response.use(
-        res => res,
+        res => {
+          console.log('====================================');
+          console.log('[withErrorHandler.js] response intercepted');
+          console.log('====================================');
+          return res;
+        },
         error => {
+          console.log('====================================');
+          console.log('[withErrorHandler.js] error registered');
+          console.log('====================================');
           this.setState({ error: error });
         },
       );

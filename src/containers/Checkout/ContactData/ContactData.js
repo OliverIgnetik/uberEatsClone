@@ -5,7 +5,7 @@ import axiosOrders from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import { connect } from 'react-redux';
-import * as actions from '../../../store/actions';
+import * as actions from '../../../store/actions/index';
 
 class ContactData extends Component {
   constructor(props) {
@@ -224,7 +224,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
   return {
-    onClearIngredients: () => dispatch({ type: actions.CLEAR_INGREDIENTS }),
+    onClearIngredients: () => dispatch({ type: actions.clearIngredients() }),
   };
 };
 
