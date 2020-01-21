@@ -22,7 +22,7 @@ export const purchaseBurgerStart = () => {
   };
 };
 
-export const purchaseBurger = orderData => {
+export const purchaseBurger = (orderData, token) => {
   // no need for logs with redux devtools
   //   console.log('====================================');
   //   console.log('[order.js] purchaseBurger action');
@@ -30,7 +30,7 @@ export const purchaseBurger = orderData => {
   return dispatch => {
     dispatch(purchaseBurgerStart());
     axiosOrders
-      .post('/orders.json', orderData)
+      .post('/orders.json?auth=' + token, orderData)
       .then(res => {
         dispatch(purchaseBurgerSuccess(res.data.name, orderData));
         return res;
@@ -67,11 +67,13 @@ export const fetchOrdersStart = () => {
   };
 };
 
-export const fetchOrders = () => {
+export const fetchOrders = (token, userId) => {
   return dispatch => {
     dispatch(fetchOrdersStart());
+    const queryParams = `?auth=${token}&orderBy="userId"&=equalTo="${userId}"`;
     axiosOrders
-      .get('/orders.json')
+      // pass the token from firebase
+      .get('/orders.json' + queryParams)
       .then(res => {
         const fetchedOrders = [];
         for (let key in res.data) {

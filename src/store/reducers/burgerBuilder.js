@@ -5,6 +5,7 @@ const initialState = {
   ingredients: null,
   totalPrice: 6,
   error: false,
+  building: false,
 };
 
 const INGREDIENT_PRICES = {
@@ -12,15 +13,6 @@ const INGREDIENT_PRICES = {
   cheese: 0.4,
   meat: 1.3,
   bacon: 0.7,
-};
-
-const removeIngredient = (state, action) => {
-  return updateObject(state, {
-    ingredients: updateObject(state.ingredients, {
-      [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
-    }),
-    totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
-  });
 };
 
 const reducer = (state = initialState, action) => {
@@ -33,25 +25,18 @@ const reducer = (state = initialState, action) => {
           [action.ingredientName]: state.ingredients[action.ingredientName] + 1,
         },
         totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
+        building: true,
       };
 
     case actionTypes.REMOVE_INGREDIENT:
       return removeIngredient(state, action);
-    // ---------------- OR------------------- //
-    // return {
-    //   ...state,
-    //   ingredients: {
-    //     ...state.ingredients,
-    //     [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
-    //   },
-    //   totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
-    // };
 
     case actionTypes.SET_INGREDIENTS:
       return updateObject(state, {
         ingredients: action.ingredients,
         error: false,
         totalPrice: 6,
+        building: false,
       });
 
     // return {
@@ -70,6 +55,16 @@ const reducer = (state = initialState, action) => {
     default:
       return state;
   }
+};
+
+const removeIngredient = (state, action) => {
+  return updateObject(state, {
+    ingredients: updateObject(state.ingredients, {
+      [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
+    }),
+    totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
+    building: true,
+  });
 };
 
 export default reducer;

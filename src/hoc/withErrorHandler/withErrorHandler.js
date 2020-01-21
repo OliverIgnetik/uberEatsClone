@@ -27,9 +27,9 @@ const withErrorHandler = (WrappedComponent, axiosOrders) => {
           return res;
         },
         error => {
-          console.log('====================================');
-          console.log('[withErrorHandler.js] error registered');
-          console.log('====================================');
+          // console.log('====================================');
+          // console.log('[withErrorHandler.js] error registered');
+          // console.log('====================================');
           this.setState({ error: error });
         },
       );
@@ -44,11 +44,12 @@ const withErrorHandler = (WrappedComponent, axiosOrders) => {
     errorConfirmedHandler = () => {
       this.setState({ error: null });
     };
+
     render() {
       return (
         <Hocaux>
           <Modal
-            show={this.state.error}
+            show={this.state.error !== null}
             modalClosed={this.errorConfirmedHandler}>
             {this.state.error ? this.state.error.message : null}
           </Modal>

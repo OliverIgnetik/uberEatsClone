@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axiosOrders from '../../axios-orders';
+// import axiosOrders from '../../axios-orders';
 
 export const addIngredient = name => {
   //   console.log('[burgerBuilder.js] inside action creator');
@@ -33,20 +33,23 @@ export const fetchIngredientsFailed = () => {
 
 export const initIngredients = () => {
   return dispatch => {
-    // this will grab the information from the most recent order
-    axiosOrders
-      .get('/orders.json')
-      .then(response => {
-        const ingredients = Object.values(response.data).reverse()[0]
-          .ingredients;
-        dispatch(setIngredients(ingredients));
-        return response;
-      })
-      // if there is no catch block, then block runs and you will get undefined cases
-      // the catch block can still run if then returns nothing
-      .catch(error => {
-        dispatch(fetchIngredientsFailed());
-        return error;
-      });
+    dispatch(setIngredients({ salad: 0, bacon: 0, meat: 0, cheese: 0 }));
   };
+  // return dispatch => {
+  // this will grab the information from the most recent order
+  //   axiosOrders
+  //     .get('/orders.json?auth=' + token)
+  //     .then(response => {
+  //       const ingredients = Object.values(response.data).reverse()[0]
+  //         .ingredients;
+  //       dispatch(setIngredients(ingredients));
+  //       return response;
+  //     })
+  //     // if there is no catch block, then block runs and you will get undefined cases
+  //     // the catch block can still run if then returns nothing
+  //     .catch(error => {
+  //       dispatch(fetchIngredientsFailed());
+  //       return error;
+  //     });
+  // };
 };
