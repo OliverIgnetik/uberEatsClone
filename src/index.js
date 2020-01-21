@@ -1,10 +1,8 @@
 import React from 'react';
-
 import authReducer from './store/reducers/auth';
 import reduxThunk from 'redux-thunk';
 import burgerBuilderReducer from './store/reducers/burgerBuilder';
 import orderReducer from './store/reducers/order';
-
 import { BrowserRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -13,7 +11,12 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// use env variables to selectively use redux DevTools
+const composeEnhancers =
+  process.env.NODE_ENV === 'development'
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    : null || compose;
+
 const reducer = combineReducers({
   burgerBuilder: burgerBuilderReducer,
   order: orderReducer,
