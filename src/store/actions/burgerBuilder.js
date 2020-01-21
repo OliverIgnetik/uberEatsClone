@@ -37,9 +37,6 @@ export const initIngredients = () => {
     axiosOrders
       .get('/orders.json')
       .then(response => {
-        console.log(
-          '[burgerBuilder.js] action creator : success init ingredients',
-        );
         const ingredients = Object.values(response.data).reverse()[0]
           .ingredients;
         dispatch(setIngredients(ingredients));
@@ -51,12 +48,5 @@ export const initIngredients = () => {
         dispatch(fetchIngredientsFailed());
         return error;
       });
-  };
-};
-
-export const clearIngredients = () => {
-  //   console.log('[burgerBuilder.js] inside action creator');
-  return {
-    type: actionTypes.CLEAR_INGREDIENTS,
   };
 };

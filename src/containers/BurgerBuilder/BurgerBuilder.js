@@ -47,6 +47,7 @@ class BurgerBuilder extends Component {
 
   // public fields syntax is an alternative to binding
   purchaseContinueHandler() {
+    this.props.onInitPurchase();
     this.props.history.push({ pathname: '/checkout' });
   }
 
@@ -107,9 +108,9 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
   return {
-    ings: state.ingredients,
-    totalPrice: state.totalPrice,
-    error: state.error,
+    ings: state.burgerBuilder.ingredients,
+    totalPrice: state.burgerBuilder.totalPrice,
+    error: state.burgerBuilder.error,
   };
 };
 const mapDispatchToProps = dispatch => {
@@ -117,6 +118,7 @@ const mapDispatchToProps = dispatch => {
     onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
     onIngredientRemoved: ingName => dispatch(actions.removeIngredient(ingName)),
     onInitIngredients: () => dispatch(actions.initIngredients()),
+    onInitPurchase: () => dispatch(actions.purchaseInit()),
   };
 };
 
