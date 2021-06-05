@@ -16,7 +16,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### Bonus Hooks implementation
 
-This repository includes a react hooks implementation (`.//react_hooks_implementation`) for pedagogical purposes. This implementation is included to show a functional aproach vs the class based approach that has been deployed on `gh-pages`.
+This repository includes a react hooks implementation (`./react_hooks_implementation`) for pedagogical purposes. This implementation is included to show a functional aproach vs the class based approach that has been deployed on `gh-pages`.
 
 ## Future Work
 
