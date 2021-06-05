@@ -1,6 +1,6 @@
 # Restaurant React App
 
-Simple React application with firebase API, sign-in authentication, `react-router-dom` routing and globalized state management using `react-redux`.
+Simple `react` application with firebase API, sign-in authentication, `react-router-dom` routing and globalized state management using `react-redux`.
 
 This application emulates a basic restaurant website for ordering food.
 
@@ -10,7 +10,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Features
 
-- Client side rendered React Application using Redux-Thunk for asynchronous requests with Axios.
+- Client side rendered `react` application using `redux-thunk` for asynchronous requests with `axios`.
 - Users can login with an authorization system to purchase a food item customized to their choice.
 - Robust error handling and form control.
 
