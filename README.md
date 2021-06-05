@@ -10,9 +10,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Features
 
-- Client side rendered `react` application using `redux-thunk` for asynchronous requests with `axios`.
-- Users can login with an authorization system to purchase a food item customized to their choice.
-- Robust error handling and form control.
+- Client side rendered `react` application using `redux-thunk` for asynchronous requests with `axios`
+- Users can login with an authorization system to purchase a food item customized to their choice
+- Logs orders on database
+- Robust error handling and form control
+- Responsive design for all devices
 
 ### Bonus Hooks implementation
 
